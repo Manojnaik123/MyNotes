@@ -1,6 +1,6 @@
 import React from 'react';
 import { Input } from "@/components/ui/input"
-import { ArrowDownWideNarrow, ListFilter, Pin, Plus, Search } from "lucide-react"
+import { ArrowDownWideNarrow, Book, ListFilter, Pin, Plus, Search } from "lucide-react"
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import NotesViewCard from '@/components/notes/notes-view-card';
@@ -52,7 +52,7 @@ const NoteViewPage = () => {
             {/* other notes apart from pinned list */}
             <div className='pt-8 flex flex-col gap-4'>
                 <span className='text-muted-foreground text-sm flex gap-2'>
-                    <Pin className='h-auto' />
+                    <Book className='h-auto' />
                     All Notes
                 </span>
 
