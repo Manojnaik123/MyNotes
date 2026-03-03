@@ -12,9 +12,7 @@ const NoteViewPage = () => {
             <div className='flex flex-col  gap-4'>
                 <div className='flex flex-1 gap-4'>
                     <div className="relative grow">
-                        <Search
-                            className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
-                        />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"/>
                         <Input
                             placeholder="Search notes..."
                             className="pl-9 "
@@ -22,7 +20,7 @@ const NoteViewPage = () => {
                     </div>
                     <Button className=''>
                         <Plus />
-                        Add Notes
+                        <span className='hidden md:flex'>Add Notes</span>
                     </Button>
                 </div>
                 <div className='flex justify-between items-end'>
