@@ -67,12 +67,12 @@ export function mapNoteToDb(note: Partial<Note>) {
 
 export async function PUT(
   req: Request,
-  context: { params: Promise<{ noteId: string, folderId: string }> }
+  context: { params: { noteId: string } }
 ) {
   try {
-    const { noteId } = await context.params;
+    const { noteId } = context.params;
 
-    const body = await req.json();
+    const body : Partial<Note> = await req.json();
 
     const { folderId } = body;
 
