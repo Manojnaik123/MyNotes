@@ -1,9 +1,13 @@
 "use client"
 
+import { FolderSideBar } from "@/types/folder"
+import { usePathname } from "next/navigation"
+
 import {
   Folder,
   Forward,
   MoreHorizontal,
+  Plus,
   Trash2,
   type LucideIcon,
 } from "lucide-react"
@@ -24,29 +28,28 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
+import AddFolderDialog from "./notes/add-folder-dialog"
 
 export function NavProjects({
-  projects,
+  folders,
 }: {
-  projects: {
-    name: string
-    url: string
-    icon: LucideIcon
-  }[]
+  folders: FolderSideBar[]
 }) {
   const { isMobile } = useSidebar()
+  const pathName = usePathname();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Folders</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {folders.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
+            <SidebarMenuButton asChild isActive={pathName === item.url}>
+              <Link href={item.url}>
+                {/* <item.icon /> */}
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -78,9 +81,8 @@ export function NavProjects({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <MoreHorizontal className="text-sidebar-foreground/70" />
-            <span>More</span>
+          <SidebarMenuButton>
+            <AddFolderDialog />
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { useEffect, useState } from "react"
+import { Folder, FolderSideBar } from "@/types/folder"
 import {
   AudioWaveform,
   BookOpen,
@@ -25,6 +27,12 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { Input } from "./ui/input"
+import { Button } from "./ui/button"
+import { useQuery } from "@tanstack/react-query"
+import { FoldersQueryKey } from "@/lib/query-keys"
+import { SpinnerCustom } from "./custom-comp/spinner"
+
 
 // This is sample data.
 const data = {
@@ -142,31 +150,42 @@ const data = {
     {
       name: "Design Engineering",
       url: "/dashboard/history",
-      icon: Frame,
+      // icon: Frame,
     },
     {
       name: "Sales & Marketing",
       url: "#",
-      icon: PieChart,
+      // icon: PieChart,
     },
     {
       name: "Travel",
       url: "#",
-      icon: Map,
+      // icon: Map,
     },
   ],
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+type AppSideBarProps = React.ComponentProps<typeof Sidebar> & {
+  folders: Folder[]
+}
+
+export function AppSidebar({ folders, ...props }: AppSideBarProps) {
+
+  const sidebarFolderData: FolderSideBar[] = (folders ?? []).map((folder) => ({
+    id: folder.id,
+    name: folder.folderName,
+    url: `/home/dashboard/${folder.id}`
+  }))
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        {/* <NavMain items={data.navMain} /> */}
-        <NavProjects projects={data.projects} />
+        <NavProjects folders={sidebarFolderData} />
       </SidebarContent>
+      {/* sidebar profile on the footer */}
       <SidebarFooter>
         <NavUser user={data.user} />
       </SidebarFooter>
