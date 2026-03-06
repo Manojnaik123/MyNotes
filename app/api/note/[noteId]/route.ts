@@ -1,5 +1,5 @@
 // app/api/note/[noteId]/route.ts
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase"
 import { Note } from "@/types/note";
 export async function DELETE(
@@ -66,7 +66,7 @@ export function mapNoteToDb(note: Partial<Note>) {
 }
 
 export async function PUT(
-  req: Request,
+  req: NextRequest,
   context: { params: { noteId: string } }
 ) {
   try {
