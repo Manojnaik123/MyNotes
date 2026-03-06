@@ -5,7 +5,7 @@ import Link from 'next/link'
 
 const NotesViewCard = ({ note }: { note: Note }) => {
   return (
-    <Link href={`/home/dashboard/${note.folderId}/${note.id}`} className='ml-0 md:ml-4 p-4 border rounded-2xl flex flex-col gap-2'>
+    <Link href={`/home/dashboard/${note.folderId}/${note.id}`} className='p-4 flex flex-col gap-2'>
       <div className='flex flex-col gap-2'>
         <div className='flex flex-col md:flex-row gap-2'>
           <h1 className='text-md md:text-1xl text-foreground'>{note.title}</h1>

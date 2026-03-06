@@ -212,7 +212,7 @@ export function AddNotesDialog({ isEdit = false }: { isEdit: boolean }) {
                 </Button>
             </DialogTrigger>
 
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className=" max-w-sm sm:max-w-lg ">
                 <form onSubmit={e => {
                     e.preventDefault();
                     mutation.mutate(userData);

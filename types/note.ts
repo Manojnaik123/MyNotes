@@ -4,9 +4,10 @@ export type NoteDB = {
     user_id: number;
     title: string;
     content: string;
+    is_pinned: boolean;
     created_at: string;
     updated_at: string;
-    is_pinned: boolean;
+    
 };
 
 // types/folder.ts
@@ -17,8 +18,8 @@ export type Note = {
     userId: number;
     title: string;
     content: string;
+    isPinned: boolean;
     createdAt: string;
     updatedAt: string;
-    isPinned: boolean;
 };
 

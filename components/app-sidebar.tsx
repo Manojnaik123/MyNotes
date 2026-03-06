@@ -17,7 +17,7 @@ import {
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
+import { NavFolders } from "@/components/nav-folders"
 import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import {
@@ -183,7 +183,7 @@ export function AppSidebar({ folders, ...props }: AppSideBarProps) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects folders={sidebarFolderData} />
+        <NavFolders folders={sidebarFolderData} />
       </SidebarContent>
       {/* sidebar profile on the footer */}
       <SidebarFooter>

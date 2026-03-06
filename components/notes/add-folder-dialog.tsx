@@ -23,41 +23,70 @@ import { QueryClient, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Folder } from "@/types/folder";
 import { FoldersQueryKey } from "@/lib/query-keys";
 
-const createFolder = async (folder: Folder) => {
-    const response = await fetch("/api/folders",
-        {
-            method: "POST",
-            headers: { 'Content-Type': "application/json" },
+const saveFolder = async (folder: Partial<Folder>) => {
+    if (folder.id) {
+        // Update existing folder
+        const response = await fetch("/api/folders", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(folder),
-        }
-    );
-    return response.json();
+        });
+        return response.json();
+    } else {
+        // Create new folder
+        const response = await fetch("/api/folders", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(folder),
+        });
+        return response.json();
+    }
+};
+
+type Props = {
+    open: boolean
+    setOpen: (open: boolean) => void
+    folderId?: number
 }
 
-const AddFolderDialog = () => {
 
-    const [folderName, setFolderName] = useState('');
-    const [open, setOpen] = useState(false);
+const AddFolderDialog = ({ open, setOpen, folderId }: Props) => {
+
+    const [folderData, setFolderData] = useState<Partial<Folder>>(
+        {
+            id: folderId,
+            folderName: '',
+            updatedAt: '',
+        }
+    );
 
     const queryClient = useQueryClient();
 
     const { mutate: addFolder } = useMutation({
-        mutationFn: createFolder,
-        onMutate: async (newFolder) => {
+        mutationFn: saveFolder,
+        onMutate: async (folder) => {
             await queryClient.cancelQueries({
                 queryKey: [FoldersQueryKey]
             });
 
             const previousFolders = queryClient.getQueryData<Folder[]>([FoldersQueryKey]);
 
-            const optimisticFolder = {
-                id: Date.now(),
-                folderName: newFolder.folderName,
+            const optimisticFolder: Folder = {
+                id: folder.id ?? Date.now(),
+                folderName: folder.folderName ?? '',
+                userId: 1,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
             }
 
             queryClient.setQueryData<Folder[]>(
                 [FoldersQueryKey],
-                (old = []) => [...old, optimisticFolder]
+                (old = []) => {
+                    if (folder.id) {
+                        return old.map(f => f.id === folder.id ? optimisticFolder : f);
+                    }
+                    return [optimisticFolder, ...old]
+                }
             )
 
             return { previousFolders }
@@ -72,25 +101,33 @@ const AddFolderDialog = () => {
             queryClient.invalidateQueries({
                 queryKey: [FoldersQueryKey]
             })
-         },
+        },
     })
 
     const handleSubmit = async (e: React.SubmitEvent) => {
         e.preventDefault();
-        addFolder({ folderName: folderName });
-        setFolderName('');
+        addFolder(folderData);
+        setFolderData({});
         setOpen(false);
     }
+
+    useEffect(() => {
+        if (folderId) {
+            const folder = queryClient.getQueryData<Folder[]>([FoldersQueryKey])
+                ?.find((folder) => folder.id === folderId);
+
+            if (folder) {
+                setFolderData(folder);
+            }
+        } else {
+            setFolderData({ folderName: '' })
+        }
+
+    }, [folderId, queryClient])
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <form id="notes-form" onSubmit={handleSubmit}>
-                <DialogTrigger asChild>
-                    <Button variant={'link'} className="text-sidebar-foreground/70 no-underline hover:no-underline">
-                        <Plus />
-                        <span className='hidden md:flex text-xs'>Add Folder</span>
-                    </Button>
-                </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle>Add Folder</DialogTitle>
@@ -105,8 +142,11 @@ const AddFolderDialog = () => {
                                 id="folderName"
                                 name="folderName"
                                 placeholder="Folder name"
-                                value={folderName}
-                                onChange={(e) => setFolderName(e.target.value)}
+                                value={folderData.folderName}
+                                onChange={(e) => setFolderData((prev) => ({
+                                    ...prev,
+                                    folderName: e.target.value,
+                                }))}
                             />
                         </Field>
                     </FieldGroup>

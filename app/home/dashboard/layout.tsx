@@ -52,7 +52,7 @@ const Layout = ({ children }: Props) => {
                 {/* Top nav layout content */}
                 <NavbarHeader />
                 <div className="flex flex-1 flex-col gap-4">
-                    <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min p-4">
+                    <div className="min-h-[100vh] flex-1 rounded-xl md:min-h-min">
                         {children}
                     </div>
                 </div>

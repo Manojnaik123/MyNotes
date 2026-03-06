@@ -11,6 +11,7 @@ import { Note } from '@/types/note';
 import { useParams } from 'next/navigation';
 import { useQuery, QueryFunctionContext } from '@tanstack/react-query';
 import { SpinnerCustom } from '@/components/custom-comp/spinner';
+import { Separator } from '@/components/ui/separator';
 
 async function fetchNotes(
     context: QueryFunctionContext<[string, number]>
@@ -30,7 +31,7 @@ const NoteViewPage = () => {
     const { data: notes, isLoading, error } = useQuery({
         queryKey: ['notes', numericFolderId],
         queryFn: fetchNotes,
-        enabled: !!numericFolderId, // prevents run before param exists
+        enabled: !!numericFolderId,
     })
 
     if (!notes) return (
@@ -43,63 +44,101 @@ const NoteViewPage = () => {
     )
 
     return (
-        <div className='h-full w-full'>
-            {/* input header */}
-            <div className='flex flex-col  gap-4'>
-                <div className='flex flex-1 gap-4'>
-                    <div className="relative grow">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                        <Input
-                            placeholder="Search notes..."
-                            className="pl-9 "
-                        />
+        <>
+            <div className="flex flex-col h-full">
+                {/* input header */}
+                <div className='flex flex-col justify-between md:flex-row gap-2 p-2 md:p-4'>
+                    <div className='flex flex-1 gap-4'>
+                        <div className="relative grow">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search notes..."
+                                className="pl-9 "
+                            />
+                        </div>
                     </div>
-                    <AddNotesDialog isEdit={false} />
-                </div>
-                <div className='flex justify-between items-end'>
-                    <div className='flex gap-4'>
-                        <Button variant='outline'>
-                            <ListFilter />
-                            Filter
-                        </Button>
-                        <Button variant='outline'>
-                            <ArrowDownWideNarrow />
-                            Sort
-                        </Button>
-                    </div>
-                    <span className='text-xs text-muted-foreground/50'>
+                    <div className='flex justify-between items-end'>
+                        <div className='flex gap-2 w-full md:w-auto'>
+                            <Button variant='outline' className='grow'>
+                                <ListFilter />
+                                Filter
+                            </Button>
+                            <Button variant='outline' className='grow'>
+                                <ArrowDownWideNarrow />
+                                Sort
+                            </Button>
+                            <AddNotesDialog isEdit={false} />
+                        </div>
+                        {/* <span className='text-xs text-muted-foreground/50'>
                         x notes total
-                    </span>
+                    </span> */}
+                    </div>
                 </div>
-            </div>
-            {/* pinned notes list */}
-            <div className='pt-8 flex flex-col gap-4'>
-                <span className='text-muted-foreground text-sm flex gap-2 items-center'>
-                    <Pin className='h-5' />
-                    Pinned Notes
-                </span>
-                {notes && notes.filter((note) => note.isPinned === true).map((note) => (
-                    <NotesViewCard note={note} />
-                ))}
-                {(notes && notes.filter((note) => note.isPinned === true).length === 0) && (
-                    <p className='text-xs text-foreground/50 pl-8 flex'> Click the <Pin className='h-4'/> icon on any note to pin it here. </p>
-                )}
+
+                {/* THis is not growing  */}
+                <div className='flex-1 overflow-auto'>
+                    <div className='p-4 bg-sidebar-foreground/10 flex justify-between items-center'>
+                        <span className='text-muted-foreground text-sm flex gap-2 items-center'>
+                            <Pin className='h-5' />
+                            Pinned Notes
+                        </span>
+                        <span className='text-muted-foreground text-xs flex gap-2 items-center'>
+                            X pinned notes
+                        </span>
+                    </div>
+                    {/* pinned notes list */}
+                    <div className='flex flex-col divide-y divide-border md:p-4'>
+                        {notes && notes.filter((note) => note.isPinned === true).map((note) => (
+                            <NotesViewCard note={note} />
+                        ))}
+                        {(notes && notes.filter((note) => note.isPinned === true).length === 0) && (
+                            <p className='text-xs text-foreground/50 pl-8 flex'> Click the <Pin className='h-4' /> icon on any note to pin it here. </p>
+                        )}
+                    </div>
+
+                    <div className='p-4 bg-sidebar-foreground/10 flex justify-between items-center'>
+                        <span className='text-muted-foreground text-sm flex gap-2 items-center'>
+                            <Book className='h-5' />
+                            All Notes
+                        </span>
+                        <span className='text-muted-foreground text-xs flex gap-2 items-center'>
+                            X pinned notes
+                        </span>
+                    </div>
+                    {/* other notes apart from pinned list */}
+                    <div className='flex flex-col divide-y divide-border md:p-4'>
+                        {notes && notes.filter((note) => note.isPinned !== true).map((note) => (
+                            <NotesViewCard note={note} />
+                        ))}
+                        {(notes && notes.filter((note) => note.isPinned !== true).length === 0) && (
+                            <p className='text-xs text-foreground/50 pl-8'> No notes found. Click '+ Add Notes' to create one. </p>
+                        )}
+                    </div>
+                </div>
+
+
+
+
+                {/* footer */}
+                <div className='border-t p-2 flex justify-between text-[9px] md:text-xs text-foreground/30'>
+                    <div className='flex gap-2'>
+                        <span className='flex items-center gap-1'>
+                            <button className='bg-green-500 p-1 mt-0.5 rounded-full'>
+
+                            </button>
+                            Last Synced: 2 min age</span>
+                        <Separator orientation='vertical' />
+                        <span>App version v 1.4.2</span>
+                    </div>
+                    <div className='flex gap-2'>
+                        <span>Privacy Policy</span>
+                        <Separator orientation='vertical' />
+                        <span>Terms of Service</span>
+                    </div>
+                </div>
             </div>
 
-            {/* other notes apart from pinned list */}
-            <div className='pt-8 flex flex-col gap-4'>
-                <span className='text-muted-foreground text-sm flex gap-2 items-center'>
-                    <Book className='h-5' />
-                    All Notes
-                </span>
-                {notes && notes.filter((note) => note.isPinned !== true).map((note) => (
-                    <NotesViewCard note={note} />
-                ))}
-                {(notes && notes.filter((note) => note.isPinned !== true).length === 0 )&& (
-                    <p className='text-xs text-foreground/50 pl-8'> No notes found. Click '+ Add Notes' to create one. </p>
-                )}
-            </div>
-        </div>
+        </>
     )
 }
 

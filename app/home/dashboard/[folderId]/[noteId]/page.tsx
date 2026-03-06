@@ -20,8 +20,6 @@ const NotesViewPage = () => {
 
   const queryClient = useQueryClient();
 
-  // const [note, setNote] = useState<Note>();
-
   const { data: noteData, isLoading } = useQuery<Note>({
     queryKey: ['note', Number(noteId)],
     queryFn: async () => {
